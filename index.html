@@ -1,1 +1,517 @@
-<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>پرونده محرمانه نورالعین 🤍</title><style>body{margin:0;background:#0b0810;color:#fff;font-family:Tahoma,Arial}.wrap{max-width:680px;margin:auto;padding:20px}.top{text-align:center}.card{margin-top:16px;padding:20px;border-radius:22px;background:#17121d;border:1px solid #3a2b3b}.story{text-align:center;font-size:18px;line-height:2;min-height:150px;display:flex;align-items:center;justify-content:center}.actions{display:grid;gap:10px}.btn{padding:14px;border-radius:14px;border:1px solid #5a3d55;background:#271b2b;color:#fff;font-size:15px}.primary{background:#e94888;border:0}.small{color:#aaa;text-align:center}</style><div class="wrap"><div class="top"><b>پرونده محرمانه شماره ۰۷ 🤫</b><h1>نورالعین 🤍</h1><div>وسط راه تسلیم نشو 😈</div></div><div class="card"><div id="no">مرحله ۱</div><div class="story" id="story"></div><div class="actions" id="actions"></div><div id="feedback" class="small"></div></div><p class="small" id="status">در حال اتصال...</p></div><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>const room=new URLSearchParams(location.search).get("room")||"ZAHRA-07";const sb=supabase.createClient(GAME_CONFIG.SUPABASE_URL,GAME_CONFIG.SUPABASE_KEY);const ch=sb.channel("nouralain-room-"+room,{config:{broadcast:{self:false},presence:{key:"player"}}});let i=0;const stages=[["شروع","آماده‌ای وارد یک پرونده خیلی مشکوک بشی؟",["آره","مشکوکم"]],["اعتماد","به آقاهه اعتماد داری؟",["دارم","فعلاً نه"]],["تله","یکی از این دکمه‌ها دروغ می‌گوید 😂",["یک","دو"]],["دروغ","فقط یک مرحله مانده. البته احتمالاً دروغ است 😂",["باشه"]],["سرنخ","کسی پشت این صفحه خیلی به یک نفر فکر کرده.",["آقاهه","نمی‌دونم"]],["باز هم","بله، هنوز ادامه دارد 😭😂",["ادامه"]],["دروغ دوم","فقط دو مرحله دیگر مانده. این یکی را باور نکن 😈",["قبول"]],["راز","آقاهه خیلی دوست دارد تا آخر بمانی.",["می‌مونم"]],["نزدیک","حالا دیگر واقعاً نزدیکیم.",["ادامه"]],["پایان کاذب","تبریک! تمام شد... 😂",["ادامه"]],["یک قدم","فقط یک قدم تا چیزی که باید ببینی.",["ادامه"]],["افشای نهایی","اگر تا اینجا آمدی، آماده‌ای.",["پایان"]]];function render(){let x=stages[i];no.textContent="مرحله "+(i+1);story.textContent=x[1];actions.innerHTML="";x[2].forEach(v=>{let b=document.createElement("button");b.className="btn primary";b.textContent=v;b.onclick=()=>answer(v);actions.appendChild(b)})}function send(type,p={}){ch.send({type:"broadcast",event:"game",payload:{type,...p}})}function answer(v){feedback.textContent="پاسخ ثبت شد: "+v;send("answer",{stage:i,answer:v});if(i<stages.length-1){i++;render();send("state",{stage:i})}else final()}function final(){no.textContent="پایان";story.innerHTML="🤍<br><b>تمام این مسیر را یک آقاهه برای تو چیده بود.</b><br>آقاهه برای زهرا خاتونش جون می‌ده. 🤍<br><br><b>راستی نورالعین... دیشب گول خوردی دوباره خوابیدی 😂😂</b><br><br>فکر کردی تموم شد؟ 😈";actions.innerHTML='<button class="btn primary" onclick="again()">فکر کردی تموم شد؟ 😈</button>';send("state",{stage:i,final:true})}function again(){feedback.textContent="باشه... این بار واقعاً تموم شد 😂🤍";send("message",{text:"آقاهه برای زهرا خاتونش جون می‌ده. 🤍"})}ch.on("broadcast",{event:"game"},({payload:p})=>{if(p.type==="goto"){i=p.stage;render()}if(p.type==="next"){i=Math.min(stages.length-1,i+1);render()}if(p.type==="prev"){i=Math.max(0,i-1);render()}if(p.type==="final")final();if(p.type==="message")feedback.textContent=p.text||""}});ch.subscribe(async s=>{if(s==="SUBSCRIBED"){await ch.track({role:"player"});status.textContent="🟢 آنلاین؛ پرونده باز است";send("state",{stage:i})}});render();</script>
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پرونده محرمانه نورالعین 🤍</title>
+
+<style>
+body{
+  margin:0;
+  background:#0b0810;
+  color:#fff;
+  font-family:Tahoma,Arial,sans-serif
+}
+.wrap{
+  max-width:680px;
+  margin:auto;
+  padding:20px
+}
+.top{text-align:center}
+.card{
+  margin-top:16px;
+  padding:20px;
+  border-radius:22px;
+  background:#17121d;
+  border:1px solid #3a2b3b
+}
+.story{
+  text-align:center;
+  font-size:18px;
+  line-height:2;
+  min-height:150px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column
+}
+.actions{
+  display:grid;
+  gap:10px
+}
+.btn{
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #5a3d55;
+  background:#271b2b;
+  color:#fff;
+  font-size:15px
+}
+.primary{
+  background:#e94888;
+  border:0
+}
+.small{
+  color:#aaa;
+  text-align:center
+}
+.error{
+  color:#ff7b9c;
+  background:#2a111b;
+  border:1px solid #6b263d;
+  padding:12px;
+  border-radius:12px;
+  margin-top:12px;
+  display:none;
+  direction:ltr;
+  text-align:left;
+  word-break:break-word
+}
+.ok{
+  color:#8ff0b0
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<b>پرونده محرمانه شماره ۰۷ 🤫</b>
+<h1>نورالعین 🤍</h1>
+<div>وسط راه تسلیم نشو 😈</div>
+</div>
+
+<div class="card">
+
+<div id="no">مرحله ۱</div>
+
+<div class="story" id="story"></div>
+
+<div class="actions" id="actions"></div>
+
+<div id="feedback" class="small"></div>
+
+</div>
+
+<p class="small" id="status">در حال اتصال...</p>
+
+<div id="error" class="error"></div>
+
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const room =
+  new URLSearchParams(location.search).get("room")
+  || "ZAHRA-07";
+
+let i = 0;
+let sb = null;
+let ch = null;
+let connected = false;
+
+const stages = [
+
+["شروع",
+"آماده‌ای وارد یک پرونده خیلی مشکوک بشی؟",
+["آره","مشکوکم"]],
+
+["اعتماد",
+"به آقاهه اعتماد داری؟",
+["دارم","فعلاً نه"]],
+
+["تله",
+"یکی از این دکمه‌ها دروغ می‌گوید 😂",
+["یک","دو"]],
+
+["دروغ",
+"فقط یک مرحله مانده. البته احتمالاً دروغ است 😂",
+["باشه"]],
+
+["سرنخ",
+"کسی پشت این صفحه خیلی به یک نفر فکر کرده.",
+["آقاهه","نمی‌دونم"]],
+
+["باز هم",
+"بله، هنوز ادامه دارد 😭😂",
+["ادامه"]],
+
+["دروغ دوم",
+"فقط دو مرحله دیگر مانده. این یکی را باور نکن 😈",
+["قبول"]],
+
+["راز",
+"آقاهه خیلی دوست دارد تا آخر بمانی.",
+["می‌مونم"]],
+
+["نزدیک",
+"حالا دیگر واقعاً نزدیکیم.",
+["ادامه"]],
+
+["پایان کاذب",
+"تبریک! تمام شد... 😂",
+["ادامه"]],
+
+["یک قدم",
+"فقط یک قدم تا چیزی که باید ببینی.",
+["ادامه"]],
+
+["افشای نهایی",
+"اگر تا اینجا آمدی، آماده‌ای.",
+["پایان"]
+
+];
+
+function render(){
+
+  const x = stages[i];
+
+  document.getElementById("no").textContent =
+    "مرحله " + (i + 1);
+
+  document.getElementById("story").textContent = x[1];
+
+  const actions =
+    document.getElementById("actions");
+
+  actions.innerHTML = "";
+
+  x[2].forEach(v => {
+
+    const b = document.createElement("button");
+
+    b.className = "btn primary";
+
+    b.textContent = v;
+
+    b.onclick = () => answer(v);
+
+    actions.appendChild(b);
+
+  });
+
+}
+
+function showError(message){
+
+  const e = document.getElementById("error");
+
+  e.style.display = "block";
+
+  e.textContent =
+    "Supabase connection error: " + message;
+
+}
+
+function send(type, p = {}){
+
+  if(!ch || !connected) return;
+
+  try{
+
+    ch.send({
+      type:"broadcast",
+      event:"game",
+      payload:{
+        type,
+        ...p
+      }
+    });
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+}
+
+function answer(v){
+
+  document.getElementById("feedback").textContent =
+    "پاسخ ثبت شد: " + v;
+
+  send("answer",{
+    stage:i,
+    answer:v
+  });
+
+  if(i < stages.length - 1){
+
+    i++;
+
+    render();
+
+    send("state",{
+      stage:i
+    });
+
+  }else{
+
+    final();
+
+  }
+
+}
+
+function final(){
+
+  document.getElementById("no").textContent =
+    "پایان";
+
+  document.getElementById("story").innerHTML =
+    "🤍<br>" +
+    "<b>تمام این مسیر را یک آقاهه برای تو چیده بود.</b><br>" +
+    "آقاهه برای زهرا خاتونش جون می‌ده. 🤍<br><br>" +
+    "<b>راستی نورالعین... دیشب گول خوردی دوباره خوابیدی 😂😂</b>" +
+    "<br><br>" +
+    "فکر کردی تموم شد؟ 😈";
+
+  document.getElementById("actions").innerHTML =
+    '<button class="btn primary" onclick="again()">فکر کردی تموم شد؟ 😈</button>';
+
+  send("state",{
+    stage:i,
+    final:true
+  });
+
+}
+
+function again(){
+
+  document.getElementById("feedback").textContent =
+    "باشه... این بار واقعاً تموم شد 😂🤍";
+
+  send("message",{
+    text:"آقاهه برای زهرا خاتونش جون می‌ده. 🤍"
+  });
+
+}
+
+async function connectSupabase(){
+
+  const status =
+    document.getElementById("status");
+
+  try{
+
+    if(!window.GAME_CONFIG){
+
+      throw new Error(
+        "GAME_CONFIG پیدا نشد. فایل config.js را بررسی کن."
+      );
+
+    }
+
+    if(!GAME_CONFIG.SUPABASE_URL){
+
+      throw new Error(
+        "SUPABASE_URL خالی است."
+      );
+
+    }
+
+    if(!GAME_CONFIG.SUPABASE_KEY){
+
+      throw new Error(
+        "SUPABASE_KEY خالی است."
+      );
+
+    }
+
+    if(
+      GAME_CONFIG.SUPABASE_KEY.includes("...")
+    ){
+
+      throw new Error(
+        "SUPABASE_KEY ناقص است و شامل ... می‌باشد."
+      );
+
+    }
+
+    if(
+      typeof supabase === "undefined"
+    ){
+
+      throw new Error(
+        "کتابخانه Supabase بارگذاری نشده است."
+      );
+
+    }
+
+    sb = supabase.createClient(
+      GAME_CONFIG.SUPABASE_URL,
+      GAME_CONFIG.SUPABASE_KEY
+    );
+
+    ch = sb.channel(
+      "nouralain-room-" + room,
+      {
+        config:{
+          broadcast:{
+            self:false
+          },
+          presence:{
+            key:"player"
+          }
+        }
+      }
+    );
+
+    ch.on(
+      "broadcast",
+      {
+        event:"game"
+      },
+      ({payload:p}) => {
+
+        if(p.type === "goto"){
+
+          i = p.stage;
+
+          render();
+
+        }
+
+        if(p.type === "next"){
+
+          i = Math.min(
+            stages.length - 1,
+            i + 1
+          );
+
+          render();
+
+        }
+
+        if(p.type === "prev"){
+
+          i = Math.max(
+            0,
+            i - 1
+          );
+
+          render();
+
+        }
+
+        if(p.type === "final"){
+
+          final();
+
+        }
+
+        if(p.type === "message"){
+
+          document.getElementById(
+            "feedback"
+          ).textContent =
+            p.text || "";
+
+        }
+
+      }
+    );
+
+    ch.subscribe(async state => {
+
+      console.log(
+        "Supabase status:",
+        state
+      );
+
+      if(state === "SUBSCRIBED"){
+
+        connected = true;
+
+        status.textContent =
+          "🟢 آنلاین؛ پرونده باز است";
+
+        status.className = "small ok";
+
+        try{
+
+          await ch.track({
+            role:"player"
+          });
+
+        }catch(e){
+
+          console.warn(
+            "Presence error:",
+            e
+          );
+
+        }
+
+        send("state",{
+          stage:i
+        });
+
+      }
+
+      else if(state === "CHANNEL_ERROR"){
+
+        connected = false;
+
+        status.textContent =
+          "🔴 خطا در اتصال Supabase";
+
+        showError(
+          "CHANNEL_ERROR"
+        );
+
+      }
+
+      else if(state === "TIMED_OUT"){
+
+        connected = false;
+
+        status.textContent =
+          "🔴 زمان اتصال تمام شد";
+
+        showError(
+          "TIMED_OUT"
+        );
+
+      }
+
+      else if(state === "CLOSED"){
+
+        connected = false;
+
+        status.textContent =
+          "🔴 اتصال بسته شد";
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      "🔴 اتصال برقرار نشد";
+
+    showError(
+      error.message || String(error)
+    );
+
+  }
+
+}
+
+render();
+
+connectSupabase();
+
+</script>
+
+</body>
+</html>
